@@ -1046,19 +1046,6 @@
   .dc-settings .adv-only { display:none; }
   body.adv .dc-settings .adv-only { display:block; }
   body.adv .dc-settings .basic-only { display:none; }
-  .dc-settings .basicnote { font-size:12.5px; color:var(--ink-faint); border:1px dashed var(--line);
-               border-radius:8px; padding:10px 13px; }
-  .dc-settings .figwrap { margin-top:14px; border-top:1px solid var(--line-soft); padding-top:13px; }
-  .dc-settings .figtitle { font-size:12.5px; font-weight:640; margin:0 0 2px; }
-  .dc-settings .figsub { font-size:11.5px; color:var(--ink-faint); margin:0 0 8px; }
-  .dc-settings .try { display:flex; gap:8px; align-items:center; flex-wrap:wrap; background:var(--panel-2);
-         border:1px dashed var(--line); border-radius:8px; padding:9px 12px; font-size:12.5px;
-         color:var(--ink-soft); margin-top:10px; }
-  .dc-settings .try input[type="number"] { width:70px; }
-  .dc-settings .try b { color:var(--ink); font-variant-numeric:tabular-nums; }
-  .dc-settings svg.ramp { width:100%; height:auto; display:block; }
-  .dc-settings svg.ramp text { font-family:var(--sans); font-size:10.5px; fill:var(--ink-faint); }
-  .dc-settings svg.ramp text.lab { fill:var(--ink-soft); font-size:11px; font-weight:600; }
   .dc-settings .empty { padding:26px 18px; text-align:center; color:var(--ink-soft); font-size:13px; }
   .dc-settings .empty b { display:block; color:var(--ink); font-size:14px; margin-bottom:6px; }
   .dc-settings .hist { display:flex; flex-direction:column; }
@@ -1503,69 +1490,6 @@
               <label for="th-auto">Match automatically at</label>
               <div class="row"><input type="number" id="th-auto" min="0" max="100"><span class="unit">% agreement</span></div>
               <span class="hint">The right-hand handle. At or above it, the two sightings are joined without asking.</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="tgroup adv-only">
-          <h3>How much of the evidence has to be there <span class="unit">· advanced</span></h3>
-          <p class="lead">A high score is cheap when almost nothing could be compared — two sightings that share only
-            a jacket colour can agree 100% and mean nothing. So a match must also clear a minimum for <b>how much of
-            the available appearance evidence was actually usable</b> — the term used in the engine, the config file
-            and the logs for this is <i>coverage</i>. That minimum <b>rises with the gap between the two
-            sightings</b>, because a longer gap makes coincidence more likely.</p>
-          <div class="grid">
-            <div class="field">
-              <label for="th-base">Minimum coverage starts at</label>
-              <div class="row"><input type="number" id="th-base" min="0" max="100"><span class="unit">%</span></div>
-              <span class="hint">Applies to sightings close together in time.</span>
-            </div>
-            <div class="field">
-              <label for="th-flat">Held there for the first</label>
-              <div class="row"><input type="number" id="th-flat" min="0"><span class="unit">minutes</span></div>
-              <span class="hint">A grace period — short gaps are not penalised.</span>
-            </div>
-            <div class="field">
-              <label for="th-slope">Then rises by</label>
-              <div class="row"><input type="number" id="th-slope" step="0.01" min="0"><span class="unit">% per minute</span></div>
-              <span class="hint">Longer gaps demand more of the evidence.</span>
-            </div>
-            <div class="field">
-              <label for="th-cap">Never rises above</label>
-              <div class="row"><input type="number" id="th-cap" min="0" max="100"><span class="unit">%</span></div>
-              <span class="hint">A ceiling is required — without one, matching eventually becomes impossible.</span>
-            </div>
-          </div>
-
-          <div class="figwrap">
-            <p class="figtitle">Minimum coverage against the gap between two sightings</p>
-            <p class="figsub">Below the line, a candidate can never match automatically however well it scores.</p>
-            <svg class="ramp" id="ramp" viewBox="0 0 640 200" role="img" aria-labelledby="rampTitle">
-              <title id="rampTitle">Minimum required coverage rises with the time gap, then flattens at a ceiling</title>
-            </svg>
-            <div class="try">
-              <span>Try it — two sightings</span>
-              <input type="number" id="tryGap" value="45" min="0" max="240">
-              <span>minutes apart must have at least</span>
-              <b id="tryOut">—</b>
-              <span>of their appearance evidence usable.</span>
-            </div>
-          </div>
-        </div>
-
-        <p class="basicnote basic-only">Two further rules are switched off from view in <b>Basic</b>: how much of
-          the evidence must have been usable before a match is allowed at all, and how that requirement tightens as
-          the gap between sightings grows. Sensible defaults are in force. Switch to <b>Advanced</b> to see and
-          change them.</p>
-
-        <div class="tgroup">
-          <h3>Falling back on description alone</h3>
-          <p class="lead">Descriptions go stale; <span id="identNoun">a face</span> does not.</p>
-          <div class="grid">
-            <div class="field">
-              <label for="th-ident" id="th-ident-label">Require a face after</label>
-              <div class="row"><input type="number" id="th-ident" min="0"><span class="unit">hours</span></div>
-              <span class="hint">Past this, a description alone can only ever wait for you.</span>
             </div>
           </div>
         </div>
@@ -5232,9 +5156,9 @@ DEMO.register('console', setPage);
   };
 
   const THRESHOLDS = {
-    person:  { auto:80, newtrack:55, base:30, flat:5,  slope:0.36, cap:50, ident:24 },
-    vehicle: { auto:80, newtrack:55, base:25, flat:10, slope:0.25, cap:45, ident:72 },
-    object:  { auto:80, newtrack:55, base:30, flat:0,  slope:0.20, cap:50, ident:0 }
+    person:  { auto:80, newtrack:55 },
+    vehicle: { auto:80, newtrack:55 },
+    object:  { auto:80, newtrack:55 }
   };
 
   const KIND_LABEL = { id:"identifies", desc:"describes", corr:"supports" };
@@ -5277,14 +5201,9 @@ DEMO.register('console', setPage);
     $("typeName").textContent = noun;
     $("typeName2").textContent = noun;
     $("th-new-label").textContent = `Treat as a new ${noun} below`;
-    $("th-ident-label").textContent = `Require ${IDENT_NOUN[type]} after`;
-    $("identNoun").textContent = IDENT_NOUN[type];
 
     const t = T();
     $("th-auto").value = t.auto;   $("th-new").value = t.newtrack;
-    $("th-base").value = t.base;   $("th-flat").value = t.flat;
-    $("th-slope").value = t.slope; $("th-cap").value = t.cap;
-    $("th-ident").value = t.ident;
 
     ROOT.querySelectorAll(".tab").forEach(x =>
       x.setAttribute("aria-selected", String(x.dataset.type === type)));
@@ -5368,58 +5287,6 @@ DEMO.register('console', setPage);
     });
   })();
 
-  const required = g => {
-    const t = T();
-    return Math.min(t.cap, t.base + Math.max(0, g - t.flat) * t.slope);
-  };
-
-  function drawRamp() {
-    const t = T();
-    const W = 640, H = 200, L = 46, R = 14, TP = 14, B = 34;
-    const maxG = Math.max(120, Math.ceil((t.flat + (t.cap - t.base) / (t.slope || 1)) * 1.35 / 30) * 30);
-    const x = g => L + (g / maxG) * (W - L - R);
-    const y = v => TP + (1 - v / 100) * (H - TP - B);
-
-    let pts = [];
-    for (let g = 0; g <= maxG; g += maxG / 160) pts.push(`${x(g).toFixed(1)},${y(required(g)).toFixed(1)}`);
-    const line = pts.join(" ");
-    const area = `${x(0)},${y(0)} ${line} ${x(maxG)},${y(0)}`;
-
-    const gap = Math.min(maxG, Math.max(0, Number($("tryGap").value) || 0));
-    const gx = x(gap), gy = y(required(gap));
-
-    const step = maxG / 30 > 6 ? 60 : 30;
-    const tickAt = [];
-    for (let g = 0; g <= maxG + 0.5; g += step) tickAt.push(g);
-    const ticks = tickAt.map(g =>
-      `<line x1="${x(g)}" y1="${y(0)}" x2="${x(g)}" y2="${y(0)+4}" stroke="var(--line)"/>
-       <text x="${x(g)}" y="${y(0)+17}" text-anchor="middle">${Math.round(g)}</text>`).join("");
-    const ygrid = [0,25,50,75,100].map(v =>
-      `<line x1="${L}" y1="${y(v)}" x2="${W-R}" y2="${y(v)}" stroke="var(--line-soft)"/>
-       <text x="${L-8}" y="${y(v)+3.5}" text-anchor="end">${v}%</text>`).join("");
-
-    $("ramp").innerHTML = `
-      <title>Minimum required coverage rises with the time gap, then flattens at a ceiling</title>
-      ${ygrid}
-      <polygon points="${area}" fill="var(--accent)" opacity=".12"/>
-      <polyline points="${line}" fill="none" stroke="var(--accent)" stroke-width="2"
-                stroke-linejoin="round" stroke-linecap="round"/>
-      <line x1="${L}" y1="${y(t.cap)}" x2="${W-R}" y2="${y(t.cap)}" stroke="var(--warn)"
-            stroke-width="1.5" stroke-dasharray="4 4"/>
-      <text class="lab" x="${W-R}" y="${y(t.cap)-7}" text-anchor="end" fill="var(--warn)">ceiling ${t.cap}%</text>
-      <line x1="${x(t.flat)}" y1="${y(0)}" x2="${x(t.flat)}" y2="${y(t.base)}" stroke="var(--line)" stroke-dasharray="3 3"/>
-      <text class="lab" x="${x(t.flat)+6}" y="${y(t.base)-18}">flat until ${t.flat} min</text>
-      <line x1="${L}" y1="${y(0)}" x2="${W-R}" y2="${y(0)}" stroke="var(--line)"/>
-      ${ticks}
-      <text x="${(L+W-R)/2}" y="${H-4}" text-anchor="middle">minutes between the two sightings</text>
-      <line x1="${gx}" y1="${TP}" x2="${gx}" y2="${y(0)}" stroke="var(--ink-faint)" stroke-dasharray="2 3"/>
-      <circle cx="${gx}" cy="${gy}" r="5.5" fill="var(--accent)" stroke="var(--panel)" stroke-width="2"/>
-      <text class="lab" x="${gx + (gap > maxG*0.7 ? -10 : 10)}" y="${gy-11}"
-            text-anchor="${gap > maxG*0.7 ? "end" : "start"}" fill="var(--accent-ink)">${required(gap).toFixed(0)}%</text>`;
-
-    $("tryOut").textContent = required(gap).toFixed(0) + "%";
-  }
-
   function recompute() {
     const { out, groups, identifying } = totals();
     const t = T();
@@ -5429,8 +5296,6 @@ DEMO.register('console', setPage);
     $("tRegions").textContent = groups.size + (groups.size === 1 ? " group" : " groups");
 
     drawSlider();
-
-    drawRamp();
 
     const notes = [];
     const noun = NOUN[type];
@@ -5443,9 +5308,7 @@ DEMO.register('console', setPage);
     }
     if (!identifying) {
       notes.push(["crit","No identifying evidence",
-        `${idName} is switched off, so nothing here can identify an individual ${noun} — only describe one.
-         More than <b>${t.ident} hours</b> apart, no ${noun} will be matched automatically; every candidate will
-         wait for you.`]);
+        `${idName} is switched off, so nothing here can identify an individual ${noun} — only describe one.`]);
     }
     if (t.newtrack === t.auto) {
       notes.push(["warn","No review queue",
@@ -5457,11 +5320,6 @@ DEMO.register('console', setPage);
       notes.push(["warn", offCount === 1 ? "1 factor off" : offCount + " factors off",
         `Switched-off factors are not scored and are not counted against the evidence available —
          they are left out entirely, so turning one off never makes a match look worse than it is.`]);
-    }
-    if (t.base > t.cap && document.body.classList.contains("adv")) {
-      notes.push(["warn","Coverage ceiling below the start",
-        `The minimum coverage starts at <b>${t.base}%</b> but is capped at <b>${t.cap}%</b>, so it never rises —
-         it is pinned at ${t.cap}% for every gap.`]);
     }
     if (type === "person") {
       const durable = state.person.filter(f =>
@@ -5487,8 +5345,7 @@ DEMO.register('console', setPage);
     $("save").textContent = isDirty ? "Save as new version" : "Saved";
   }
 
-  const THRESH_FIELDS = { "th-auto":"auto", "th-new":"newtrack", "th-base":"base",
-                          "th-flat":"flat", "th-slope":"slope", "th-cap":"cap", "th-ident":"ident" };
+  const THRESH_FIELDS = { "th-auto":"auto", "th-new":"newtrack" };
 
   ROOT.addEventListener("input", e => {
     const w = e.target.dataset.w;
@@ -5507,7 +5364,6 @@ DEMO.register('console', setPage);
       recompute();
       return;
     }
-    if (e.target.id === "tryGap") drawRamp();
   });
   ROOT.addEventListener("change", e => {
     const aon = e.target.dataset.aon;
