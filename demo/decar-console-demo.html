@@ -1046,6 +1046,23 @@
   .dc-settings .adv-only { display:none; }
   body.adv .dc-settings .adv-only { display:block; }
   body.adv .dc-settings .basic-only { display:none; }
+  .dc-settings .modehint { margin:-6px 0 14px; font-size:11.5px; color:var(--ink-faint); max-width:96ch; }
+  .dc-settings .tgroup .ghint { margin:10px 0 0; font-size:11.5px; color:var(--ink-faint); max-width:96ch; }
+  .dc-settings .tgroup .ghint b { color:var(--ink-soft); }
+  .dc-settings table.tiers { min-width:420px; }
+  .dc-settings table.floortab { min-width:640px; }
+  .dc-settings table.tiers td, .dc-settings table.floortab td { font-size:12.5px; }
+  .dc-settings table.tiers td:first-child, .dc-settings table.floortab td:first-child { font-weight:640; }
+  .dc-settings table.tiers .fkey, .dc-settings .field .fkey { margin-top:3px; }
+  .dc-settings .tierfig { margin:14px 0 0; border-top:1px solid var(--line-soft); padding-top:13px; }
+  .dc-settings .tierfig figcaption { font-size:12.5px; font-weight:640; margin:0 0 8px; }
+  .dc-settings .tierfig svg { width:100%; height:auto; display:block; color:var(--ink-soft); }
+  .dc-settings .tierfig svg text { font-family:var(--sans); }
+  .dc-settings .tiertry { display:flex; gap:8px; align-items:center; flex-wrap:wrap; background:var(--panel-2);
+         border:1px dashed var(--line); border-radius:8px; padding:9px 12px; font-size:12.5px;
+         color:var(--ink-soft); margin-top:10px; }
+  .dc-settings .tiertry b { color:var(--ink); font-variant-numeric:tabular-nums; }
+  .dc-settings .tiertry .hint { flex-basis:100%; font-size:11.5px; color:var(--ink-faint); }
   .dc-settings .empty { padding:26px 18px; text-align:center; color:var(--ink-soft); font-size:13px; }
   .dc-settings .empty b { display:block; color:var(--ink); font-size:14px; margin-bottom:6px; }
   .dc-settings .hist { display:flex; flex-direction:column; }
@@ -1415,6 +1432,9 @@
       <button id="modeAdv" aria-pressed="false">Advanced</button>
     </div>
   </div>
+  <p class="modehint">Basic and Advanced change what is shown, never what is enforced or saved. A rule hidden
+    in Basic is still in force at whatever the version above holds, and a save from Basic carries it through
+    unchanged.</p>
 
   <div id="live">
     <div class="card">
@@ -1494,6 +1514,83 @@
           </div>
         </div>
 
+        <div class="tgroup adv-only" id="advLadder">
+          <h3>How much has to agree</h3>
+          <div class="tscroll">
+            <table class="tiers">
+              <thead><tr><th>How long ago</th><th>Separate parts of the subject</th><th>Share of the evidence</th></tr></thead>
+              <tbody id="tierRows"></tbody>
+            </table>
+          </div>
+          <p class="ghint">Two sightings are only compared at all when at least this many separate parts of the
+            subject agree independently, and when at least this share of the evidence they could both be judged on
+            did agree. The bars rise with elapsed time; they never fall. A confirmed plate or a recognised face does
+            not pass through this gate and still matches at any age.</p>
+          <p class="ghint" id="tierBounds"></p>
+          <figure class="tierfig">
+            <figcaption>How much of the evidence must be usable, against the gap between the two sightings</figcaption>
+            <svg id="tierFig" viewBox="0 0 640 200" role="img"
+                 aria-label="Required share of the evidence against elapsed time: a step for each of the three rungs, flat between them"></svg>
+            <p class="ghint">A staircase and not a slope, and that is the mechanism rather than the drawing: the
+              requirement holds flat within a rung and steps at the boundary. Below a step, a pairing at that age
+              cannot be matched on this evidence however well it scores — unless it carries a confirmed plate or a
+              recognised face, which does not pass through this gate at all.</p>
+          </figure>
+          <div class="tiertry">
+            <label for="tierTryGap">Try it — two sightings</label>
+            <input type="number" id="tierTryGap" min="0" value="45">
+            <span>minutes apart must have at least</span>
+            <b id="tierTryOut">—</b>
+            <span class="hint">Reads the bars as they are typed above, not as they were saved.</span>
+          </div>
+        </div>
+
+        <div class="tgroup adv-only" id="advDecay">
+          <h3>How long category evidence lasts</h3>
+          <div class="grid">
+            <div class="field">
+              <label for="cd-hold_s">Category evidence counts in full for the first (seconds)</label>
+              <div class="row"><input type="number" id="cd-hold_s" data-decay="hold_s"></div>
+              <span class="fkey">class_decay.hold_s</span>
+            </div>
+            <div class="field">
+              <label for="cd-horizon_s">…and stops counting in full after (seconds)</label>
+              <div class="row"><input type="number" id="cd-horizon_s" data-decay="horizon_s"></div>
+              <span class="fkey">class_decay.horizon_s</span>
+            </div>
+            <div class="field">
+              <label for="cd-floor_margin">Keep the category floor this far below the lowest bar</label>
+              <div class="row"><input type="number" id="cd-floor_margin" data-decay="floor_margin" step="0.01"></div>
+              <span class="fkey">class_decay.floor_margin</span>
+            </div>
+            <div class="field">
+              <label for="cd-floor_quantum">Round the category floor to steps of</label>
+              <div class="row"><input type="number" id="cd-floor_quantum" data-decay="floor_quantum" step="0.01"></div>
+              <span class="fkey">class_decay.floor_quantum</span>
+            </div>
+          </div>
+          <p class="ghint">Category evidence — a red hatchback, a person in a navy coat — is worth its full weight
+            for a while after a sighting and then falls back to a floor. How long that window is answers <i>for how
+            long will make and model alone match?</i> The floor itself is not a field: it is worked out from the
+            weights and the bars, and is shown below.</p>
+        </div>
+
+        <div class="tgroup adv-only" id="advFloor">
+          <h3>What category evidence is worth once the window closes</h3>
+          <div class="tscroll">
+            <table class="floortab">
+              <thead><tr><th>Lighting</th><th class="num">Floor</th><th class="num">Category evidence alone</th>
+                <th class="num">Category weight / all evidence</th><th class="num">Allowed range</th><th></th></tr></thead>
+              <tbody id="floorRows"></tbody>
+            </table>
+          </div>
+          <p class="ghint">Worked out from the weights and the bars above — not entered, and a policy that tries to
+            state it is refused. <b>Category evidence alone</b> is what a match would score on category evidence and
+            nothing else once the window has closed; it is below the lowest bar for any positive weights, which is
+            why make and model alone cannot settle an old pairing. Change a weight or a bar above to see these
+            move.</p>
+        </div>
+
       </div>
     </div>
   </div>
@@ -1525,9 +1622,7 @@
     Turning a factor off is the same as setting its weight to zero: it is not scored, and it is not counted
     against the evidence available. It is left out entirely.<br>
     Factors are named in plain language here; <b>Show config keys</b> reveals the identifiers used in the
-    configuration file, the audit log and support requests (<code>upper_colour</code>, <code>plate</code>).<br>
-    <b>Basic</b> and <b>Advanced</b> change what is shown, never what is enforced — the rules hidden in Basic are
-    still in force, at whatever values the active version holds.
+    configuration file, the audit log and support requests (<code>upper_colour</code>, <code>plate</code>).
   </p>
 </section>
 
@@ -5155,11 +5250,21 @@ DEMO.register('console', setPage);
     ]
   };
 
+  const TIER_NAMES = ["recent", "stale", "remote"];
+  const ladder = (remoteRegions, stale, remote) => ({
+    recent: { regions:2, share:0.3 },
+    stale:  { regions:2, share:stale },
+    remote: { regions:remoteRegions, share:remote }
+  });
+  const classDecay = () => ({ hold_s:0, horizon_s:120, floor_margin:0.01, floor_quantum:0.01 });
   const THRESHOLDS = {
-    person:  { auto:80, newtrack:55 },
-    vehicle: { auto:80, newtrack:55 },
-    object:  { auto:80, newtrack:55 }
+    person:  { auto:80, newtrack:55, tiers:ladder(3, 0.35, 0.4), decay:classDecay() },
+    vehicle: { auto:80, newtrack:55, tiers:ladder(2, 0.4, 0.5), decay:classDecay() },
+    object:  { auto:80, newtrack:55, tiers:ladder(2, 0.4, 0.5), decay:classDecay() }
   };
+  const TIER_HORIZONS = { person:[300, 3600], vehicle:[600, 3600], object:[600, 3600] };
+  const PARTIAL_MASS = { person:1, vehicle:5/6, object:null };
+  const PROFILE_LABEL = ["Daylight", "Infra-red", "Neutral"];
 
   const KIND_LABEL = { id:"identifies", desc:"describes", corr:"supports" };
 
@@ -5205,9 +5310,130 @@ DEMO.register('console', setPage);
     const t = T();
     $("th-auto").value = t.auto;   $("th-new").value = t.newtrack;
 
+    $("tierRows").innerHTML = TIER_NAMES.map(n => `<tr>
+        <td>${n}</td>
+        <td><input type="number" min="0" step="1" value="${t.tiers[n].regions}" data-tier="${n}" data-tk="regions"
+              aria-label="${n}: independent parts">
+            <span class="fkey">thresholds.staleness_tiers.${n}.min_independent_regions</span></td>
+        <td><input type="number" min="0" step="0.05" value="${t.tiers[n].share}" data-tier="${n}" data-tk="share"
+              aria-label="${n}: share of evidence">
+            <span class="fkey">thresholds.staleness_tiers.${n}.min_discriminative_coverage</span></td>
+      </tr>`).join("");
+    for (const k of Object.keys(t.decay)) $("cd-" + k).value = t.decay[k];
+    const [recentS, remoteS] = TIER_HORIZONS[type];
+    $("tierBounds").innerHTML = `Which rung a pairing falls on is decided by the gap between the two sightings:
+      up to ${duration(recentS)} it is <i>recent</i>, up to ${duration(remoteS)} it is <i>stale</i>, and beyond
+      that <i>remote</i>. Those two boundaries are part of this policy but have no control on this screen; they
+      are shown so the figure below can be read.`;
+
     ROOT.querySelectorAll(".tab").forEach(x =>
       x.setAttribute("aria-selected", String(x.dataset.type === type)));
     recompute();
+  }
+
+  function duration(seconds) {
+    if (seconds <= 0) return "no time at all";
+    for (const [size, unit] of [[86400, "day"], [3600, "hour"], [60, "minute"]]) {
+      if (seconds >= size && seconds % size === 0) {
+        const n = seconds / size;
+        return n === 1 ? `1 ${unit}` : `${n} ${unit}s`;
+      }
+    }
+    return seconds === 1 ? "1 second" : `${seconds} seconds`;
+  }
+
+  function figureTop(bars) {
+    const highest = Math.max(0, ...bars);
+    if (highest <= 0) return 0.1;
+    const scaled = highest * 1.5;
+    const tenths = Math.floor(scaled / 0.1 + 1e-9) + (Math.abs(scaled % 0.1) < 1e-9 ? 0 : 1);
+    return Math.min(1, Math.max(0.1, tenths * 0.1));
+  }
+
+  function drawTiers() {
+    const t = T();
+    const bars = TIER_NAMES.map(n => Math.max(0, Number(t.tiers[n].share) || 0));
+    const top = figureTop(bars);
+    const [L, R, TOP, AXIS] = [58, 624, 18, 158];
+    const recentS = Math.max(0, TIER_HORIZONS[type][0]);
+    const remoteS = Math.max(recentS, TIER_HORIZONS[type][1]);
+    const span = Math.max(remoteS * 1.35, recentS * 4, 1);
+    const x = s => L + Math.min(1, Math.max(0, s / span)) * (R - L);
+    const y = c => AXIS - Math.min(1, Math.max(0, c / top)) * (AXIS - TOP);
+    const edges = [[0, recentS], [recentS, remoteS], [remoteS, span]];
+    let svg = "";
+    for (const v of [0, top / 2, top]) {
+      svg += `<line x1="${L}" y1="${y(v).toFixed(1)}" x2="${R}" y2="${y(v).toFixed(1)}" stroke="currentColor"
+        stroke-opacity="0.18" stroke-width="1"></line>
+        <text x="${L - 8}" y="${(y(v) + 4).toFixed(1)}" text-anchor="end" font-size="11" fill="currentColor"
+        fill-opacity="0.75">${Math.round(v * 100)}%</text>`;
+    }
+    for (const at of [recentS, remoteS]) {
+      if (at <= 0) continue;
+      svg += `<line x1="${x(at).toFixed(1)}" y1="${TOP}" x2="${x(at).toFixed(1)}" y2="${AXIS}" stroke="currentColor"
+        stroke-opacity="0.35" stroke-width="1" stroke-dasharray="3 3"></line>
+        <text x="${x(at).toFixed(1)}" y="${TOP - 5}" text-anchor="middle" font-size="11" fill="currentColor"
+        fill-opacity="0.75">${duration(at)}</text>`;
+    }
+    TIER_NAMES.forEach((n, i) => {
+      const left = x(edges[i][0]), right = x(edges[i][1]), topY = y(bars[i]);
+      svg += `<rect data-tier-step="${n}" x="${left.toFixed(1)}" y="${topY.toFixed(1)}"
+        width="${Math.max(0, right - left).toFixed(1)}" height="${Math.max(0, AXIS - topY).toFixed(1)}"
+        fill="currentColor" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.5"></rect>
+        <text x="${((left + right) / 2).toFixed(1)}" y="${AXIS + 14}" text-anchor="middle" font-size="11"
+        fill="currentColor" fill-opacity="0.75">${n}</text>`;
+    });
+    svg += `<line x1="${L}" y1="${AXIS}" x2="${R}" y2="${AXIS}" stroke="currentColor" stroke-opacity="0.6"
+      stroke-width="1.5"></line>`;
+    $("tierFig").innerHTML = svg;
+  }
+
+  function tierTry() {
+    const minutes = Number($("tierTryGap").value);
+    const out = $("tierTryOut");
+    if ($("tierTryGap").value === "" || !isFinite(minutes) || minutes < 0) { out.textContent = "—"; return; }
+    const seconds = minutes * 60;
+    const [recentS, remoteS] = TIER_HORIZONS[type];
+    const tier = seconds <= recentS ? "recent" : seconds <= remoteS ? "stale" : "remote";
+    const rung = T().tiers[tier];
+    const share = `${Math.round(rung.share * 1000) / 10}% of their shared evidence`;
+    out.textContent = `${share}, agreeing across ${rung.regions} separate parts (the ${tier} rung)`;
+  }
+
+  function quantumFloor(upper, quantum) {
+    if (!(quantum > 0)) return upper;
+    const steps = Math.floor(upper / quantum + 1e-9);
+    return Number((steps * quantum).toFixed(10));
+  }
+
+  function drawFloor() {
+    const t = T();
+    const shares = TIER_NAMES.map(n => Number(t.tiers[n].share) || 0);
+    const cMin = Math.min(...shares), cMax = Math.max(...shares);
+    const margin = Number(t.decay.floor_margin) || 0;
+    const quantum = Number(t.decay.floor_quantum) || 0;
+    const fmt4 = v => v.toFixed(4);
+    const fmtG = v => String(Number(v.toPrecision(6)));
+    const rows = [];
+    for (let p = 0; p < 3; p++) {
+      const admitted = state[type].filter(f =>
+        enabled[type][f.key] && f.kind !== "corr" && (Number(f.w[p]) || 0) > 0);
+      const total = admitted.reduce((s, f) => s + Number(f.w[p]), 0);
+      const wClass = admitted.filter(f => f.kind === "desc").reduce((s, f) => s + Number(f.w[p]), 0);
+      if (wClass <= 0) continue;
+      const ref = PARTIAL_MASS[type] === null ? null : admitted.find(f => f.kind === "id") || null;
+      const wPartial = ref ? Number(ref.w[p]) * PARTIAL_MASS[type] : 0;
+      const lower = ref ? (cMax * total - wPartial) / wClass : null;
+      const upper = (cMin - margin) * total / wClass;
+      const phi = Math.min(1, quantumFloor(upper, quantum));
+      rows.push(`<tr><td>${PROFILE_LABEL[p]}</td>
+        <td class="num">${fmtG(Number(phi.toPrecision(4)))}</td>
+        <td class="num">${fmt4(phi * wClass / total)}</td>
+        <td class="num">${fmtG(wClass)} / ${fmtG(total)}</td>
+        <td class="num">${lower === null ? "—" : fmt4(lower)} … ${fmt4(upper)}</td>
+        <td>${upper > 1 ? "clamped" : "—"}</td></tr>`);
+    }
+    $("floorRows").innerHTML = rows.join("");
   }
 
   function totals() {
@@ -5296,6 +5522,9 @@ DEMO.register('console', setPage);
     $("tRegions").textContent = groups.size + (groups.size === 1 ? " group" : " groups");
 
     drawSlider();
+    drawTiers();
+    tierTry();
+    drawFloor();
 
     const notes = [];
     const noun = NOUN[type];
@@ -5359,6 +5588,25 @@ DEMO.register('console', setPage);
       setBoundary(e.target.id === "th-auto" ? "hi" : "lo", Number(e.target.value) || 0);
       return;
     }
+    const tier = e.target.dataset.tier;
+    if (tier !== undefined) {
+      if (e.target.value === "") return;
+      const v = Number(e.target.value);
+      if (!isFinite(v)) return;
+      T().tiers[tier][e.target.dataset.tk] = v;
+      recompute();
+      return;
+    }
+    const decay = e.target.dataset.decay;
+    if (decay !== undefined) {
+      if (e.target.value === "") return;
+      const v = Number(e.target.value);
+      if (!isFinite(v)) return;
+      T().decay[decay] = v;
+      recompute();
+      return;
+    }
+    if (e.target.id === "tierTryGap") { tierTry(); return; }
     if (THRESH_FIELDS[e.target.id]) {
       T()[THRESH_FIELDS[e.target.id]] = Math.max(0, Number(e.target.value)||0);
       recompute();
